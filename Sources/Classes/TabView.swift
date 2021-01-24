@@ -9,12 +9,19 @@ public protocol TabViewDelegate: class {
 
     /// Called after selecting the tab.
     func tabView(_ tabView: TabView, didSelectTabAt index: Int)
+    
+    /// Called after reselecting the active tab..
+    func tabView(_ tabView: TabView, didReselectTabAt index: Int)
+
 }
 
 extension TabViewDelegate {
     public func tabView(_ tabView: TabView, willSelectTabAt index: Int) {}
 
     public func tabView(_ tabView: TabView, didSelectTabAt index: Int) {}
+
+    public func tabView(_ tabView: TabView, didReselectTabAt index: Int) {}
+
 }
 
 // MARK: - TabViewDataSource
@@ -527,9 +534,16 @@ extension TabView {
 
     @objc func tapItemView(_ recognizer: UITapGestureRecognizer) {
         guard let itemView = recognizer.view as? TabItemView,
-            let index: Int = itemViews.firstIndex(of: itemView),
-            currentIndex != index else { return }
+            let index: Int = itemViews.firstIndex(of: itemView)
+             else { return }
+        
+        if index == currentIndex {
+            tabViewDelegate?.tabView(self, didReselectTabAt: index)
+            return
+        }
+
         tabViewDelegate?.tabView(self, willSelectTabAt: index)
+
         moveTabItem(index: index, animated: true)
         update(index)
         tabViewDelegate?.tabView(self, didSelectTabAt: index)

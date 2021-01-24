@@ -160,6 +160,10 @@ public protocol SwipeMenuViewDelegate: class {
 
     /// Called after swiping the page.
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, didChangeIndexFrom fromIndex: Int, to toIndex: Int)
+    
+    /// Called when reselecting the active tab.
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, didReselect index: Int)
+
 }
 
 extension SwipeMenuViewDelegate {
@@ -167,6 +171,7 @@ extension SwipeMenuViewDelegate {
     public func swipeMenuView(_ swipeMenuView: SwipeMenuView, viewDidSetupAt currentIndex: Int) { }
     public func swipeMenuView(_ swipeMenuView: SwipeMenuView, willChangeIndexFrom fromIndex: Int, to toIndex: Int) { }
     public func swipeMenuView(_ swipeMenuView: SwipeMenuView, didChangeIndexFrom fromIndex: Int, to toIndex: Int) { }
+    public func swipeMenuView(_ swipeMenuView: SwipeMenuView, didReselect index: Int) { }
 }
 
 // MARK: - SwipeMenuViewDataSource
@@ -390,6 +395,10 @@ extension SwipeMenuView: TabViewDelegate, TabViewDataSource {
         contentScrollView.jump(to: index, animated: true)
 
         update(from: currentIndex, to: index)
+    }
+    
+    public func tabView(_ tabView: TabView, didReselectTabAt index: Int) {
+        delegate?.swipeMenuView(self, didReselect: index)
     }
 
     public func numberOfItems(in menuView: TabView) -> Int {
